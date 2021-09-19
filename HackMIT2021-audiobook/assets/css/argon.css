@@ -29984,3 +29984,6 @@ input.datetimepicker[data-color='yellow'] + .bootstrap-datetimepicker-widget.dro
 	background: #0088cc;
 	box-shadow: none;
 }
+.options{
+    justify-content: space-around
+}
