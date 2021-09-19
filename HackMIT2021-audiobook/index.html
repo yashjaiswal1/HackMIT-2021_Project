@@ -134,16 +134,21 @@
                 <div class="col">
                   <h3 class="mb-0">Type Text Here</h3>
                 </div>
-                <div class="col text-right">
+                <div class="col text-right" margin-right="0px">
+                  <label class="switch switch-flat">
+                    <input class="switch-input" type="checkbox" />
+                    <span class="switch-label" data-on="On" data-off="Off"></span> 
+                    <span class="switch-handle"></span> 
+                  </label>
+                </div>
+                <div class="col" margin-left="0px !important" margin-right="0px">
+                  <b>Dyslexic Text Mode</b>
                 </div>
               </div>
             </div>
             <div class="form-group">
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Text</span>
-                </div>
-                <textarea class="form-control" aria-label="With textarea" id="text_input"></textarea>
+                <textarea name="Text1" cols="95" rows="16"></textarea>
               </div>
           </div>
           </div>
@@ -155,17 +160,13 @@
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-0">Upload Voice Sample</h3>
+                  <h3 class="mb-0">Choose a Voice Sample</h3>
                 </div>
               </div>
             </div>
-            <div class="col">
-              <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-              <input type="file" id="upload" />
-              <audio id="audio" controls>
-              <source src="" id="src" />
-              </audio>
-            </div> 
+            <div class="flex-container">
+                
+            </div>
           </div>
         </div>
       </div>
