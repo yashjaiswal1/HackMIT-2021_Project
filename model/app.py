@@ -51,13 +51,89 @@ def uploadFile():
             file_logs.append("Unexpected file")
             return file_logs
 
-@app.route('/login',methods=['GET', 'POST'])
+@app.route('/about',methods=['GET', 'POST'])
 def login():
-    return render_template("login.html")
+    return render_template("about.html")
 
 @app.route('/author',methods=['GET', 'POST'])
 def author():
-    return render_template("author.html")
+    print("works")
+    # return render_template("author.html")
+    file_log_output = uploadFile()
+
+    # input text (default value)
+    input_text = "Hello! I will be your narrator for today. Let's get started!"
+    if request.method == 'POST':
+        # overwrite default value
+        input_text = request.form["textarea"]
+
+    if str(file_log_output)=="None":
+        return render_template("author.html",output="")
+    else:
+        from encoder.params_model import model_embedding_size as speaker_embedding_size
+        from utils.argutils import print_args
+        from synthesizer.inference import Synthesizer
+        from encoder import inference as encoder
+        from vocoder import inference as vocoder
+        from pathlib import Path
+        import numpy as np
+        import soundfile as sf
+        import librosa
+        import argparse
+        import torch
+        try:
+            parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+            
+            # update the model with newer pretrained model .pt files
+            parser.add_argument("-e", "--enc_model_output_file_path", type=Path,default="encoder/saved_models/pretrained.pt")
+            parser.add_argument("-s", "--syn_model_dir", type=Path,default="synthesizer/saved_models/pretrained/pretrained.pt")
+            parser.add_argument("-v", "--voc_model_output_file_path", type=Path,default="vocoder/saved_models/pretrained/pretrained.pt")
+            parser.add_argument("--low_mem", action="store_true")
+            
+            # collect all args
+            args = parser.parse_args()
+            print_args(args, parser)
+            
+            encoder.load_model(args.enc_model_output_file_path)
+            print(args)
+            
+            # replace tacotron model with the newer pre-trained model
+            # synthesizer = Synthesizer(args.syn_model_dir.joinpath("taco_pretrained"))
+            synthesizer = Synthesizer(args.syn_model_dir)
+            vocoder.load_model(args.voc_model_output_file_path)
+
+            input_file_path = file_log_output[1]
+            preprocessed_wav = encoder.preprocess_wav(input_file_path)
+            original_wav, sampling_rate = librosa.load(input_file_path)
+            preprocessed_wav = encoder.preprocess_wav(original_wav, sampling_rate)
+            embed = encoder.embed_utterance(preprocessed_wav)
+            print("Embedding created...")
+            text = str(input_text)
+            texts = [text]
+            embeds = [embed]
+            specs = synthesizer.synthesize_spectrograms(texts, embeds)
+            spec = specs[0]
+            print("Mel spectrogram created...")
+            print("Synthesizing the waveform:")
+            generated_wav = vocoder.infer_waveform(spec)
+            generated_wav = np.pad(generated_wav, (0, synthesizer.sample_rate), mode="constant")
+
+            output_file_path = "static/output.wav"
+            print(generated_wav.dtype)
+            print(librosa.__version__)
+
+            # using SoundFile to gather samplerate
+            sr = sf.info(output_file_path).samplerate
+            # print("SR = " + str(sr))      16000
+            # print("Synth SR = " + str(synthesizer.sample_rate))   16000
+            
+            # using SoundFile to create the output.wav file
+            sf.write(output_file_path, generated_wav.astype(np.float32), sr)
+            print("\nSaved output as %s\n\n" % output_file_path)
+            return render_template("author.html",output=htmloader(text,file_log_output[1],output_file_path))
+        except Exception as e:
+            return render_template("author.html",output="Caught exception: %s" % repr(e))
+    
 
 @app.route('/user',methods=['GET', 'POST'])
 def user():
