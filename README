@@ -13,6 +13,6 @@ Mel Spectrogram, is a Spectrogram with the Mel Scale as its y axis where Mel Sca
 
 Speaker Encoder takes in the audio as mel spectrogram frames to produce embedding which captures how speaker sounds. 
 The synthesizer analyzes text input to create mel spectrograms.
-synthesizer’s encoder concatenates its encoding of the phoneme sequence with the speaker embedding, 
+Synthesizer’s encoder concatenates its encoding of the phoneme sequence with the speaker embedding, 
 and decoder and attention parts of the synthesizer recurrently generates mel spectrogram, 
 which the vocoder later converts into sound.
