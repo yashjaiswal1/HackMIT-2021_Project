@@ -8963,6 +8963,11 @@ button.bg-darker:focus
     border: 0 !important;
 }
 
+.border-10
+{
+    border: 10;
+}
+
 .border-top-0
 {
     border-top: 0 !important;
