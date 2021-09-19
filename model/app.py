@@ -51,13 +51,25 @@ def uploadFile():
             file_logs.append("Unexpected file")
             return file_logs
 
+@app.route('/login',methods=['GET', 'POST'])
+def login():
+    return render_template("login.html")
+
+@app.route('/author',methods=['GET', 'POST'])
+def author():
+    return render_template("author.html")
+
+@app.route('/user',methods=['GET', 'POST'])
+def user():
+    return render_template("user.html")
+
 @app.route('/',methods=['GET', 'POST'])
 def main():
     print("called main route...")
     file_log_output = uploadFile()
 
     # input text (default value)
-    input_text = "Hello! I will be your narrator for today! Let's get started!"
+    input_text = "Hello! I will be your narrator for today. Let's get started!"
     if request.method == 'POST':
         # overwrite default value
         input_text = request.form["textarea"]
