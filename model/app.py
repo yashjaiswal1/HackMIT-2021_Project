@@ -20,15 +20,12 @@ def add_header(response):
 
 def htmloader(text,inputaudio,outputaudio):
     x = ""
-    x+="Utterance: <p>"+text+"</p><br>"
-    x+="Original:<br>"
-    x+="<audio controls>"
-    x+="  <source src='"+inputaudio+"' type='audio/"+inputaudio.rsplit('.', 1)[1].lower()+"'>"
-    x+="</audio><br>"
-    x+="Cloned Utterance:<br>"
-    x+="<audio controls>"
+    x+="Narration Text: <p>"+text+"</p><br>"
+    x+="Narration Audio:<br>"
+    x+="<audio id='outputAudio' controls>"
     x+="  <source src='"+str(outputaudio)+"' type='audio/wav'>"
     x+="</audio><br>"
+    x+='<div class="form-group col-sm-3"><label for="exampleFormControlSelect1">Set audio speed</label><select class="form-control" id="speedForm" onchange="setSpeed(value)"><option>0.50</option><option>0.75</option><option selected>1.00</option><option>1.25</option><option>1.50</option></select>'
     return x
 
 def isAllowedFile(filename):
@@ -52,7 +49,7 @@ def uploadFile():
             return file_logs
 
 @app.route('/about',methods=['GET', 'POST'])
-def login():
+def about():
     return render_template("about.html")
 
 @app.route('/author',methods=['GET', 'POST'])
@@ -62,7 +59,7 @@ def author():
     file_log_output = uploadFile()
 
     # input text (default value)
-    input_text = "Hello! I will be your narrator for today. Let's get started!"
+    input_text = "Enter the text to be narrated here!"
     if request.method == 'POST':
         # overwrite default value
         input_text = request.form["textarea"]
@@ -133,11 +130,7 @@ def author():
             return render_template("author.html",output=htmloader(text,file_log_output[1],output_file_path))
         except Exception as e:
             return render_template("author.html",output="Caught exception: %s" % repr(e))
-    
 
-@app.route('/user',methods=['GET', 'POST'])
-def user():
-    return render_template("user.html")
 
 @app.route('/',methods=['GET', 'POST'])
 def main():
